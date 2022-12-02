@@ -5,6 +5,7 @@ from starlette.responses import JSONResponse
 
 from src.api.routes import router
 from src.core import authjwt
+from src.db import common
 
 app = FastAPI()
 

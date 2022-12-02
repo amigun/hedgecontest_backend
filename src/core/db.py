@@ -6,5 +6,5 @@ from src.core.settings import Settings
 
 Base = declarative_base()
 
-engine = create_engine(Settings.DATABASE_URL)
+engine = create_engine('sqlite:///database.sqlite3')  # TODO: взять это из Settings
 Session = sessionmaker(engine, expire_on_commit=False)

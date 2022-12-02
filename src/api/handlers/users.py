@@ -14,17 +14,15 @@ def login(user: User, authorize: AuthJWT = Depends(), users_operation: UsersOper
     if user_object:
         if user_object.email != user.username or user_object.hashed_password != user.password:  # add hash_password
             raise HTTPException(status_code=401, detail='Почта или пароль неверны!')
-    else:
-        raise HTTPException(status_code=401, detail='Почта или пароль неверны!')
 
-    access_token = authorize.create_access_token(subject=user.username)
+    access_token = authorize.create_access_token(subject={'email': user.username, 'role': user_object.role})
     return {'access_token': access_token}
 
 
 @router.post('/registration', status_code=status.HTTP_201_CREATED)
 def registration(user: User, authorize: AuthJWT = Depends(), users_operation: UsersOperation = Depends()):
     if users_operation.get_user(user.username) is None:
-        users_operation.create_user(user.username, user.password)
+        users_operation.create_user(user.username, user.password, 'user')
         return {'result': 'Пользователь успешно создан'}
     else:
         return {'result': 'Пользователь с таким email уже существует!'}

@@ -17,6 +17,6 @@ class UsersOperation:
         except sqlalchemy.exc.NoResultFound:
             return None
 
-    def create_user(self, email, password):
-        self.session.add(User(email=email, hashed_password=password))  # add hash_password
+    def create_user(self, email, password, role):
+        self.session.add(User(email=email, hashed_password=password, role=role))  # add hash_password
         self.session.commit()

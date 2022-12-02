@@ -11,9 +11,9 @@ class UsersOperation:
     def __init__(self, session: Session = Depends(get_database)):
         self.session = session
 
-    def get_user(self, email) :
+    def get_user(self, email):
         try:
-            return self.session.query(User).filter(User.email==email).one()
+            return self.session.query(User).filter(User.email == email).one()
         except sqlalchemy.exc.NoResultFound:
             return None
 

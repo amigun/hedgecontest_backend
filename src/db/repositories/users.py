@@ -11,12 +11,12 @@ class UsersOperation:
     def __init__(self, session: Session = Depends(get_database)):
         self.session = session
 
-    def get_user(self, email) -> bool:
+    def get_user(self, email) :
         try:
-            return bool(self.session.query(User).filter(User.email==email).one())
+            return self.session.query(User).filter(User.email==email).one()
         except sqlalchemy.exc.NoResultFound:
-            return False
+            return None
 
     def create_user(self, email, password):
-        self.session.add(User(email=email, hashed_password=get_password_hash(password)))
+        self.session.add(User(email=email, hashed_password=password))  # add hash_password
         self.session.commit()

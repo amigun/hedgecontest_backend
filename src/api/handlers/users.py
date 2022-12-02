@@ -9,8 +9,12 @@ router = APIRouter()
 
 
 @router.post('/login')
-def login(user: User, authorize: AuthJWT = Depends()):
-    if user.username != 'test' or user.password != 'test':
+def login(user: User, authorize: AuthJWT = Depends(), users_operation: UsersOperation = Depends()):
+    user_object = users_operation.get_user(user.username)
+    if user_object:
+        if user_object.email != user.username or user_object.hashed_password != user.password:  # add hash_password
+            raise HTTPException(status_code=401, detail='Почта или пароль неверны!')
+    else:
         raise HTTPException(status_code=401, detail='Почта или пароль неверны!')
 
     access_token = authorize.create_access_token(subject=user.username)
@@ -19,7 +23,7 @@ def login(user: User, authorize: AuthJWT = Depends()):
 
 @router.post('/registration', status_code=status.HTTP_201_CREATED)
 def registration(user: User, authorize: AuthJWT = Depends(), users_operation: UsersOperation = Depends()):
-    if users_operation.get_user(user.username) is False:
+    if users_operation.get_user(user.username) is None:
         users_operation.create_user(user.username, user.password)
         return {'result': 'Пользователь успешно создан'}
     else:

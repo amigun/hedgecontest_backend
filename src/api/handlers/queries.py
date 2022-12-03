@@ -18,7 +18,7 @@ def create_query(query: Query, queries_operation: QueriesOperation = Depends(), 
     except AttributeError:
         return HTTPException(status_code=401, detail="Пользователь не авторизован")
 
-    queries_operation.create_query(
+    return queries_operation.create_query(
         query.full_name,
         email,
         query.post,
@@ -28,8 +28,6 @@ def create_query(query: Query, queries_operation: QueriesOperation = Depends(), 
         query.annotation,
         query.file
     )
-
-    return {'result': 'Заявка успешно создана!'}
 
 
 @router.get('/get_queries')

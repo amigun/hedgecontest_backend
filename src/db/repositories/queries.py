@@ -12,20 +12,25 @@ class QueriesOperation:
         self.session = session
 
     def create_query(self, full_name, email, post, job_place, topic_work, title_work, annotation, file):
-        try:
-            self.session.add(Query(
-                full_name=full_name,
-                email=email,
-                post=post,
-                job_place=job_place,
-                topic_work=topic_work,
-                title_work=title_work,
-                annotation=annotation,
-                file=file
-            ))
-        except sqlalchemy.exc.IntegrityError:
+        if self.get_query_by_email(email) == {'result': 'Записи не найдено'}:
+            try:
+                self.session.add(Query(
+                    full_name=full_name,
+                    email=email,
+                    post=post,
+                    job_place=job_place,
+                    topic_work=topic_work,
+                    title_work=title_work,
+                    annotation=annotation,
+                    file=file
+                ))
+                self.session.commit()
+
+                return {'result': 'Заявка успешно создана!'}
+            except sqlalchemy.exc.IntegrityError:
+                return {'result': 'Заявка от этого пользователя уже была подана ранее'}
+        else:
             return {'result': 'Заявка от этого пользователя уже была подана ранее'}
-        self.session.commit()
 
     def get_queries(self):
         try:

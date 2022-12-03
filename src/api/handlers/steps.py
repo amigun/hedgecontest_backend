@@ -7,8 +7,15 @@ router = APIRouter()
 
 
 @router.get('/get_status')
-def get_status():
-    return {'result': 'Ожидается запуск'}
+def get_status(steps_operations: StepsOperation = Depends()):
+    pairs = {
+        'waiting': 'Ожидается запуск',
+        'receiving': 'Прием заявок',
+        'expertise': 'Независимая экспертиза',
+        'finishing': 'Завершение конкурса'
+    }
+
+    return {'result': pairs[steps_operations.get_status()]}
 
 
 @router.post('/set_deadlines')

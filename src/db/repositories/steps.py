@@ -23,6 +23,7 @@ class StepsOperation:
             self.session.delete(receiving_dl)
             self.session.delete(expertise_dl)
             self.session.delete(finishing_dl)
+            self.session.commit()
         except sqlalchemy.exc.NoResultFound:
             pass
 
@@ -57,3 +58,27 @@ class StepsOperation:
         finishing = self.session.query(Step).filter(Step.name == 'finishing').one()
 
         return {'waiting': waiting.deadline, 'receiving': receiving.deadline, 'expertise': expertise.deadline, 'finishing': finishing.deadline}
+
+    def get_status(self):
+        deadlines = self.get_deadlines()
+
+        # waiting_dt = datetime.datetime.strptime(deadlines['waiting'], '%Y-%m-%d')
+        # receiving_dt = datetime.datetime.strptime(deadlines['receiving'], '%Y-%m-%d')
+        # expertise_dt = datetime.datetime.strptime(deadlines['expertise'], '%Y-%m-%d')
+        # finishing_dt = datetime.datetime.strptime(deadlines['finishing'], '%Y-%m-%d')
+
+        waiting_dt = deadlines['waiting']
+        receiving_dt = deadlines['receiving']
+        expertise_dt = deadlines['expertise']
+        finishing_dt = deadlines['finishing']
+
+        now = datetime.date.today()
+
+        if now <= waiting_dt:
+            return 'waiting'
+        elif now <= receiving_dt:
+            return 'receiving'
+        elif now <= expertise_dt:
+            return 'expertise'
+        else:
+            return 'finishing'

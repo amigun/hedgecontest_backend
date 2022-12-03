@@ -10,9 +10,10 @@ class QueriesOperation:
     def __init__(self, session: Session = Depends(get_database)):
         self.session = session
 
-    def create_query(self, full_name, post, job_place, topic_work, title_work, annotation, file):
+    def create_query(self, full_name, email, post, job_place, topic_work, title_work, annotation, file):
         self.session.add(Query(
             full_name=full_name,
+            email=email,
             post=post,
             job_place=job_place,
             topic_work=topic_work,
@@ -28,8 +29,14 @@ class QueriesOperation:
         except Exception as e:
             print(e)
 
-    def get_query(self, id):
+    def get_query_by_id(self, id):
         try:
             return self.session.query(Query).filter(Query.id == id).one()
+        except sqlalchemy.exc.NoResultFound:
+            return {'result': 'Записи не найдено'}
+
+    def get_query_by_email(self, email):
+        try:
+            return self.session.query(Query).filter(Query.email == email).one()
         except sqlalchemy.exc.NoResultFound:
             return {'result': 'Записи не найдено'}

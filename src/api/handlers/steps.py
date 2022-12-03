@@ -1,4 +1,7 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+
+from src.db.repositories.steps import StepsOperation
+from src.models.schemas.steps import StepsDeadlines
 
 router = APIRouter()
 
@@ -8,8 +11,6 @@ def get_status():
     return {'result': 'Ожидается запуск'}
 
 
-@router.post('/set_deadline/{step}')
-def set_deadline(step: str):
-    step_deadline = step
-
-    return step_deadline
+@router.post('/set_deadline')
+def set_deadline(steps_deadlines: StepsDeadlines, steps_operations: StepsOperation = Depends()):
+    pass

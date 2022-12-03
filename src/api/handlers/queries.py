@@ -20,3 +20,13 @@ def create_query(query: Query, queries_operation: QueriesOperation = Depends()):
     )
 
     return {'result': 'Заявка успешно создана!'}
+
+
+@router.get('/get_queries')
+def get_queries(queries_operation: QueriesOperation = Depends()):
+    return queries_operation.get_queries()
+
+
+@router.get('/get_query/{id}')
+def get_query(id: int, queries_operation: QueriesOperation = Depends()):
+    return queries_operation.get_query(id)

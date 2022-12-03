@@ -1,3 +1,4 @@
+import sqlalchemy.exc
 from fastapi import Depends
 
 from src.core.db import Session
@@ -21,8 +22,14 @@ class QueriesOperation:
         ))
         self.session.commit()
 
-    # def get_user(self, email):
-    #     try:
-    #         return self.session.query(User).filter(User.email == email).one()
-    #     except sqlalchemy.exc.NoResultFound:
-    #         return None
+    def get_queries(self):
+        try:
+            return self.session.query(Query).all()
+        except Exception as e:
+            print(e)
+
+    def get_query(self, id):
+        try:
+            return self.session.query(Query).filter(Query.id == id).one()
+        except sqlalchemy.exc.NoResultFound:
+            return {'result': 'Записи не найдено'}

@@ -3,7 +3,8 @@ from fastapi import Depends
 
 from src.core.db import Session
 from src.db.common import get_database
-from src.db.models.queries import Query
+from src.db.models.queries import Query, Score
+from src.db.models.users import User
 
 
 class QueriesOperation:
@@ -40,3 +41,19 @@ class QueriesOperation:
             return self.session.query(Query).filter(Query.email == email).one()
         except sqlalchemy.exc.NoResultFound:
             return {'result': 'Записи не найдено'}
+
+    def set_score_by_id(self, id, data):
+        query = self.session.query(Query).filter(Query.id == data.id_query).one()
+        user = self.session.query(User).filter(User.id == id).one()
+
+        try:
+            self.session.add(Score(
+                id_query=query.id,
+                id_expert=user.id,
+                sum_score=data.sum_score
+            ))
+            self.session.commit()
+        except sqlalchemy.exc.IntegrityError:
+            return {'result': 'Работа уже была оценена ранее'}
+
+        return {'result': 'Балл выставлен'}

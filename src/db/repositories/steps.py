@@ -1,7 +1,11 @@
+import datetime
+
+import sqlalchemy.exc
 from fastapi import Depends
 
 from src.core.db import Session
 from src.db.common import get_database
+from src.db.models.steps import Step
 
 
 class StepsOperation:
@@ -9,4 +13,47 @@ class StepsOperation:
         self.session = session
 
     def set_deadlines(self, waiting, receiving, expertise, finishing):
-        pass
+        try:
+            waiting_dl = self.session.query(Step).filter(Step.name == 'waiting').one()
+            receiving_dl = self.session.query(Step).filter(Step.name == 'receiving').one()
+            expertise_dl = self.session.query(Step).filter(Step.name == 'expertise').one()
+            finishing_dl = self.session.query(Step).filter(Step.name == 'finishing').one()
+
+            self.session.delete(waiting_dl)
+            self.session.delete(receiving_dl)
+            self.session.delete(expertise_dl)
+            self.session.delete(finishing_dl)
+        except sqlalchemy.exc.NoResultFound:
+            pass
+
+        waiting = datetime.datetime.strptime(waiting, "%Y-%m-%d").date()
+        receiving = datetime.datetime.strptime(receiving, "%Y-%m-%d").date()
+        expertise = datetime.datetime.strptime(expertise, "%Y-%m-%d").date()
+        finishing = datetime.datetime.strptime(finishing, "%Y-%m-%d").date()
+
+        self.session.add(Step(
+            name='waiting',
+            deadline=waiting
+        ))
+        self.session.add(Step(
+            name='receiving',
+            deadline=receiving
+        ))
+        self.session.add(Step(
+            name='expertise',
+            deadline=expertise
+        ))
+        self.session.add(Step(
+            name='finishing',
+            deadline=finishing
+        ))
+
+        self.session.commit()
+
+    def get_deadlines(self):
+        waiting = self.session.query(Step).filter(Step.name == 'waiting').one()
+        receiving = self.session.query(Step).filter(Step.name == 'receiving').one()
+        expertise = self.session.query(Step).filter(Step.name == 'expertise').one()
+        finishing = self.session.query(Step).filter(Step.name == 'finishing').one()
+
+        return {'waiting': waiting.deadline, 'receiving': receiving.deadline, 'expertise': expertise.deadline, 'finishing': finishing.deadline}

@@ -9,3 +9,8 @@ class Query(BaseModel):
     title_work: str
     annotation: str
     file: str
+
+
+class Score(BaseModel):
+    id_query: int
+    sum_score: int

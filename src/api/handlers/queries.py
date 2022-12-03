@@ -3,7 +3,8 @@ from fastapi_jwt_auth import AuthJWT
 from starlette import status
 
 from src.db.repositories.queries import QueriesOperation
-from src.models.schemas.queries import Query
+from src.db.repositories.users import UsersOperation
+from src.models.schemas.queries import Query, Score
 
 router = APIRouter()
 
@@ -45,3 +46,10 @@ def get_query_by_id(id: int, queries_operation: QueriesOperation = Depends()):
 def get_query_by_email(email: str, queries_operation: QueriesOperation = Depends()):
     return queries_operation.get_query_by_email(email)
 
+
+@router.post('/set_score_by_id/')
+def set_score_by_id(data: Score, authorize: AuthJWT = Depends(), queries_operation: QueriesOperation = Depends(), user_operations: UsersOperation = Depends()):
+    authorize.jwt_required()
+    id_expert = user_operations.get_user(authorize.get_jwt_subject().split(':')[0]).id
+
+    return queries_operation.set_score_by_id(id_expert, data)

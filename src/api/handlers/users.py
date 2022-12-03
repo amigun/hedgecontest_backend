@@ -11,8 +11,7 @@ router = APIRouter()
 @router.post('/registration', status_code=status.HTTP_201_CREATED)
 def registration(user: User, authorize: AuthJWT = Depends(), users_operation: UsersOperation = Depends()):
     if users_operation.get_user(user.username) is None:
-        users_operation.create_user(user.username, user.password, 'user')
-        return {'result': 'Пользователь успешно создан'}
+        return users_operation.create_user(user.username, user.password, 'user')
     else:
         return {'result': 'Пользователь с таким email уже существует!'}
 

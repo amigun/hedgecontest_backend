@@ -51,3 +51,15 @@ def set_score_by_id(data: Score, authorize: AuthJWT = Depends(), queries_operati
     id_expert = user_operations.get_user(authorize.get_jwt_subject().split(':')[0]).id
 
     return queries_operation.set_score_by_id(id_expert, data)
+
+
+@router.post('/accept_query/{id}')
+def accept_query(id: int, queries_operation: QueriesOperation = Depends()):
+    query = queries_operation.get_query_by_id(id)
+    return queries_operation.accept_query(query)
+
+
+@router.delete('/delete_query/{id}')
+def delete_query(id: int, queries_operation: QueriesOperation = Depends()):
+    query = queries_operation.get_query_by_id(id)
+    return queries_operation.delete_query(query)

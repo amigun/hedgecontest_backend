@@ -3,7 +3,7 @@ from fastapi import Depends
 
 from src.core.db import Session
 from src.db.common import get_database
-from src.db.models.queries import Query, Score
+from src.db.models.queries import Query, Score, AcceptedQuery
 from src.db.models.users import User
 
 
@@ -50,6 +50,18 @@ class QueriesOperation:
         except sqlalchemy.exc.NoResultFound:
             return {'result': 'Записи не найдено'}
 
+    def get_accepted_query_by_id(self, id):
+        try:
+            return self.session.query(AcceptedQuery).filter(AcceptedQuery.id == id).one()
+        except sqlalchemy.exc.NoResultFound:
+            return {'result': 'Записи не найдено'}
+
+    def get_accepted_query_by_email(self, email):
+        try:
+            return self.session.query(AcceptedQuery).filter(AcceptedQuery.email == email).one()
+        except sqlalchemy.exc.NoResultFound:
+            return {'result': 'Записи не найдено'}
+
     def set_score_by_id(self, id, data):
         query = self.session.query(Query).filter(Query.id == data.id_query).one()
         user = self.session.query(User).filter(User.id == id).one()
@@ -65,3 +77,35 @@ class QueriesOperation:
             return {'result': 'Работа уже была оценена ранее'}
 
         return {'result': 'Балл выставлен'}
+
+    def delete_query(self, query):
+        old_query = self.get_query_by_email(query.email)
+        self.session.delete(old_query)
+        self.session.commit()
+
+        return {'result': 'Заявка удалена!'}
+
+    def accept_query(self, query):
+        if self.get_accepted_query_by_email(query.email):
+            try:
+                self.session.add(AcceptedQuery(
+
+                    full_name=query.full_name,
+                    email=query.email,
+                    post=query.post,
+                    job_place=query.job_place,
+                    topic_work=query.topic_work,
+                    title_work=query.title_work,
+                    annotation=query.annotation,
+                    file=query.file
+                ))
+
+                self.delete_query(query)
+
+                self.session.commit()
+
+                return {'result': 'Заявка одобрена!'}
+            except sqlalchemy.exc.IntegrityError:
+                return {'result': 'Заявка от этого пользователя уже была одобрена ранее'}
+        else:
+            return {'result': 'Заявка от этого пользователя уже была одобрена ранее'}

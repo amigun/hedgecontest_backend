@@ -62,15 +62,9 @@ class StepsOperation:
     def get_status(self):
         deadlines = self.get_deadlines()
 
-        # waiting_dt = datetime.datetime.strptime(deadlines['waiting'], '%Y-%m-%d')
-        # receiving_dt = datetime.datetime.strptime(deadlines['receiving'], '%Y-%m-%d')
-        # expertise_dt = datetime.datetime.strptime(deadlines['expertise'], '%Y-%m-%d')
-        # finishing_dt = datetime.datetime.strptime(deadlines['finishing'], '%Y-%m-%d')
-
         waiting_dt = deadlines['waiting']
         receiving_dt = deadlines['receiving']
         expertise_dt = deadlines['expertise']
-        finishing_dt = deadlines['finishing']
 
         now = datetime.date.today()
 

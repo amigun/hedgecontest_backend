@@ -17,6 +17,20 @@ class Query(Base):
     file: str = Column(String)
 
 
+class AcceptedQuery(Base):
+    __tablename__ = 'accepted_query'
+
+    id: int = Column(Integer, primary_key=True)
+    email: str = Column(String, unique=True)
+    full_name: str = Column(String)
+    post: str = Column(String)
+    job_place: str = Column(String)
+    topic_work: str = Column(String)
+    title_work: str = Column(String)
+    annotation: str = Column(String)
+    file: str = Column(String)
+
+
 class Score(Base):
     __tablename__ = 'scores'
     __table_args__ = (

@@ -24,8 +24,8 @@ def login(user: User, authorize: AuthJWT = Depends(), users_operation: UsersOper
         if user_object.email != user.username or user_object.hashed_password != user.password:  # add hash_password
             raise HTTPException(status_code=401, detail='Почта или пароль неверны!')
 
-    access_token = authorize.create_access_token(subject=f'{user.username}:{user_object.role}')
-    return {'access_token': access_token}
+        access_token = authorize.create_access_token(subject=f'{user.username}:{user_object.role}')
+        return {'access_token': access_token}
 
 
 @router.get('/get_user/{email}')

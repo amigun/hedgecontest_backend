@@ -63,7 +63,7 @@ class QueriesOperation:
             return {'result': 'Записи не найдено'}
 
     def set_score_by_id(self, id, data):
-        query = self.session.query(Query).filter(Query.id == data.id_query).one()
+        query = self.session.query(AcceptedQuery).filter(AcceptedQuery.id == data.id_query).one()
         user = self.session.query(User).filter(User.id == id).one()
 
         try:

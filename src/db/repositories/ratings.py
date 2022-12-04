@@ -1,3 +1,4 @@
+import sqlalchemy.exc
 from fastapi import Depends
 
 from src.core.db import Session
@@ -11,10 +12,20 @@ class RatingsOperation:
         self.session = session
 
     def get_user_scores_by_id(self, id):
-        user = self.session.query(User).filter(User.id == id).one()
-        query = self.session.query(Query).filter(Query.email == user.email).one()
+        try:
+            user = self.session.query(User).filter(User.id == id).one()
+        except sqlalchemy.exc.NoResultFound:
+            return {'result': 'Пользователь с таким id не найден'}
 
-        scores = self.session.query(Score).filter(Score.id_query == query.id).all()
+        try:
+            query = self.session.query(Query).filter(Query.email == user.email).one()
+        except sqlalchemy.exc.NoResultFound:
+            return {'result': 'Пользователь не подавал заявку'}
+
+        try:
+            scores = self.session.query(Score).filter(Score.id_query == query.id).all()
+        except sqlalchemy.exc.NoResultFound:
+            return {'result': 'Заявка пользователя не была оценена'}
 
         summation = 0
 

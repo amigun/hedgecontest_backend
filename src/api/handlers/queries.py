@@ -17,25 +17,22 @@ router = APIRouter()
 def create_query(query: Query, queries_operation: QueriesOperation = Depends(), authorize: AuthJWT = Depends(), need: Need = Depends(), steps_operation: StepsOperation = Depends()):  # add email from jwt token
     authorize.jwt_optional()
     if steps_operation.get_status() == 'receiving':
-        if need.need(['user'], authorize.get_raw_jwt()):
 
-            try:
-                email = authorize.get_jwt_subject().split(':')[0]
-            except AttributeError:
-                return HTTPException(status_code=401, detail="Пользователь не авторизован")
+        try:
+            email = authorize.get_jwt_subject().split(':')[0]
+        except AttributeError:
+            return HTTPException(status_code=401, detail="Пользователь не авторизован")
 
-            return queries_operation.create_query(
-                query.full_name,
-                email,
-                query.post,
-                query.job_place,
-                query.topic_work,
-                query.title_work,
-                query.annotation,
-                query.file
-            )
-        else:
-            return {'result': 'ПОльзователь не авторизован'}
+        return queries_operation.create_query(
+            query.full_name,
+            email,
+            query.post,
+            query.job_place,
+            query.topic_work,
+            query.title_work,
+            query.annotation,
+            query.file
+        )
     else:
         return {'result': 'Время подачи заявки вышло'}
 
@@ -53,6 +50,7 @@ def get_query_by_id(id: int, queries_operation: QueriesOperation = Depends(), au
     authorize.jwt_optional()
     if need.need(['admin'], authorize.get_raw_jwt()):
 
+        print(queries_operation.get_query_by_id(id))
         return queries_operation.get_query_by_id(id)
 
 

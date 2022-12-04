@@ -27,7 +27,7 @@ class StepsOperation:
         except sqlalchemy.exc.NoResultFound:
             pass
 
-        waiting = datetime.datetime.strptime(waiting, "%Y-%m.%d").date()
+        waiting = datetime.datetime.strptime(waiting, "%Y-%m-%d").date()
         receiving = datetime.datetime.strptime(receiving, "%Y-%m-%d").date()
         expertise = datetime.datetime.strptime(expertise, "%Y-%m-%d").date()
         finishing = datetime.datetime.strptime(finishing, "%Y-%m-%d").date()

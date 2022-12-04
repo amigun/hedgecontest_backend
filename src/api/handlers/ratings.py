@@ -1,15 +1,20 @@
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi_jwt_auth import AuthJWT
 
+from src.api.dependencies.common import Timing
 from src.api.dependencies.users import Need
 from src.db.repositories.ratings import RatingsOperation
+from src.db.repositories.steps import StepsOperation
 
 router = APIRouter()
 
 
 @router.get('/get_ratings')
-def get_ratings(ratings_operation: RatingsOperation = Depends()):
-    return ratings_operation.get_rating()
+def get_ratings(ratings_operation: RatingsOperation = Depends(), steps_operation: StepsOperation = Depends()):
+    if steps_operation.get_status() == 'finishing':
+        return ratings_operation.get_rating()
+    else:
+        return {'result': 'Рейтинг недоступен'}
 
 
 @router.get('/get_rating/{id}')

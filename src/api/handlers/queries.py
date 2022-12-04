@@ -1,6 +1,7 @@
 from fastapi import APIRouter, UploadFile, File, Depends, HTTPException
 from fastapi_jwt_auth import AuthJWT
 from starlette import status
+from starlette.requests import Request
 
 from src.api.dependencies.common import Timing
 from src.api.dependencies.users import Need
@@ -77,10 +78,10 @@ def set_score_by_id(data: Score, authorize: AuthJWT = Depends(), queries_operati
 
 
 @router.post('/accept_query/{id}')
-def accept_query(id: int, queries_operation: QueriesOperation = Depends(), authorize: AuthJWT = Depends(),
+def accept_query(request: Request, id: int, queries_operation: QueriesOperation = Depends(), authorize: AuthJWT = Depends(),
                  need: Need = Depends()):
     authorize.jwt_optional()
-    print(f'\n\n\n{authorize.get_raw_jwt()}\n\n\n')
+    print(f'\n\n\n{request.headers["Authorization"]}\n\n\n')
     if need.need(['admin'], authorize.get_raw_jwt()):
         query = queries_operation.get_query_by_id(id)
         return queries_operation.accept_query(query)

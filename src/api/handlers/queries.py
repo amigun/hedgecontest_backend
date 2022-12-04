@@ -33,6 +33,8 @@ def create_query(query: Query, queries_operation: QueriesOperation = Depends(), 
                 query.annotation,
                 query.file
             )
+        else:
+            return {'result': 'ПОльзователь не авторизован'}
     else:
         return {'result': 'Время подачи заявки вышло'}
 

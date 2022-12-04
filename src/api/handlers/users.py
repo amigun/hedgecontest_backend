@@ -4,6 +4,7 @@ from fastapi_jwt_auth import AuthJWT
 from src.db.repositories.users import UsersOperation
 from src.models.schemas.users import User
 from src.services.utils import get_password_hash, verify_password
+from src.api.dependencies.users import Need
 
 router = APIRouter()
 
@@ -28,17 +29,21 @@ def login(user: User, authorize: AuthJWT = Depends(), users_operation: UsersOper
 
 
 @router.get('/get_user/{email}')
-def get_user(email: str, users_operation: UsersOperation = Depends()):
-    user_object = users_operation.get_user(email)
+def get_user(email: str, users_operation: UsersOperation = Depends(), need: Need = Depends(), authorize: AuthJWT = Depends()):
+    authorize.jwt_optional()
+    if need.need(['expert', 'admin'], authorize.get_raw_jwt()):
+        user_object = users_operation.get_user(email)
 
-    if user_object:
-        return {
-            'id': user_object.id,
-            'email': user_object.email,
-            'role': user_object.role
-        }
+        if user_object:
+            return {
+                'id': user_object.id,
+                'email': user_object.email,
+                'role': user_object.role
+            }
+        else:
+            return {'result': 'Пользователь с таким email не найден!'}
     else:
-        return {'result': 'Пользователь с таким email не найден!'}
+        return HTTPException(status_code=401, detail='Нету прав доступа')
 
 
 @router.get('/user')

@@ -16,7 +16,7 @@ def create_query(query: Query, queries_operation: QueriesOperation = Depends(), 
     need.need(['user'], authorize.get_raw_jwt())
 
     try:
-        email = authorize.get_jwt_subject().split(':')[0]
+        email  = authorize.get_jwt_subject().split(':')[0]
     except AttributeError:
         return HTTPException(status_code=401, detail="Пользователь не авторизован")
 

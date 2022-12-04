@@ -76,15 +76,10 @@ def set_score_by_id(data: Score, authorize: AuthJWT = Depends(), queries_operati
 
 
 @router.post('/accept_query/{id}')
-def accept_query(request: Request, id: int, queries_operation: QueriesOperation = Depends(), authorize: AuthJWT = Depends(),
+def accept_query(id: int, queries_operation: QueriesOperation = Depends(), authorize: AuthJWT = Depends(),
                  need: Need = Depends()):
-    authorize.jwt_optional()
-    print(f'\n\n\n{request.headers["Authorization"]}\n\n\n')
-    if need.need(['admin'], authorize.get_raw_jwt()):
-        query = queries_operation.get_query_by_id(id)
-        return queries_operation.accept_query(query)
-    else:
-        return HTTPException(status_code=401, detail='Нету прав доступа')
+    query = queries_operation.get_query_by_id(id)
+    return queries_operation.accept_query(query)
 
 
 @router.delete('/delete_query/{id}')

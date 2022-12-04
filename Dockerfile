@@ -5,6 +5,10 @@ ENV PYTHONUNBUFFERED 1
 
 EXPOSE 8000
 
+RUN apt-get -y update
+RUN apt-get -y upgrade
+RUN apt-get install -y sqlite3 libsqlite3-dev
+
 RUN mkdir hedgecontest/
 COPY . hedgecontest/
 WORKDIR hedgecontest/

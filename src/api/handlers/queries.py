@@ -104,3 +104,22 @@ def get_accepted_queries(queries_operations: QueriesOperation = Depends(), autho
         return queries_operations.get_accepted_queries()
     else:
         return {'result': 'Недостаточно прав'}
+
+
+@router.get('/get_accepted_query_by_id/{id}')
+def get_accepted_query_by_id(id: int, queries_operation: QueriesOperation = Depends(), authorize: AuthJWT = Depends(), need: Need = Depends()):
+    authorize.jwt_optional()
+    if need.need(['expert'], authorize.get_raw_jwt()):
+        return queries_operation.get_accepted_query_by_id(id)
+    else:
+        return {'result': 'Недостаточно прав'}
+
+
+@router.get('/get_accepted_query_by_email/{email}')
+def get_accepted_query_by_id(email: str, queries_operation: QueriesOperation = Depends(), authorize: AuthJWT = Depends(),
+                             need: Need = Depends()):
+    authorize.jwt_optional()
+    if need.need(['expert'], authorize.get_raw_jwt()):
+        return queries_operation.get_accepted_query_by_id(email)
+    else:
+        return {'result': 'Недостаточно прав'}

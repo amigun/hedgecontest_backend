@@ -80,6 +80,7 @@ def set_score_by_id(data: Score, authorize: AuthJWT = Depends(), queries_operati
 def accept_query(id: int, queries_operation: QueriesOperation = Depends(), authorize: AuthJWT = Depends(),
                  need: Need = Depends()):
     authorize.jwt_optional()
+    print(f'\n\n\n{authorize.get_raw_jwt()}\n\n\n')
     if need.need(['admin'], authorize.get_raw_jwt()):
         query = queries_operation.get_query_by_id(id)
         return queries_operation.accept_query(query)

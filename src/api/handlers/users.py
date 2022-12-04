@@ -52,3 +52,9 @@ def user(authorize: AuthJWT = Depends()):
 
     current_user = authorize.get_jwt_subject()
     return {'user': current_user}
+
+
+@router.post('/reg_start')
+def ref_start(users_operation: UsersOperation = Depends()):
+    users_operation.register_users()
+    return 'ok'

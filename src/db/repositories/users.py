@@ -11,6 +11,27 @@ class UsersOperation:
     def __init__(self, session: Session = Depends(get_database)):
         self.session = session
 
+    def register_users(self):
+        self.session.add(User(
+            email='user',
+            hashed_password='user',
+            role='user'
+        ))
+
+        self.session.add(User(
+            email='expert',
+            hashed_password='expert',
+            role='expert'
+        ))
+
+        self.session.add(User(
+            email='admin',
+            hashed_password='admin',
+            role='admin'
+        ))
+
+        self.session.commit()
+
     def get_user(self, email):
         try:
             return self.session.query(User).filter(User.email == email).one()

@@ -95,3 +95,12 @@ def delete_query(id: int, queries_operation: QueriesOperation = Depends(), autho
         return queries_operation.delete_query(query)
     else:
         return HTTPException(status_code=401, detail='Нету прав доступа')
+
+
+@router.get('/get_accepted_queries')
+def get_accepted_queries(queries_operations: QueriesOperation = Depends(), authorize: AuthJWT = Depends(), need: Need = Depends()):
+    authorize.jwt_optional()
+    if need.need(['expert'], authorize.get_raw_jwt()):
+        return queries_operations.get_accepted_queries()
+    else:
+        return {'result': 'Недостаточно прав'}

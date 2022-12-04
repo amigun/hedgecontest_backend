@@ -50,6 +50,12 @@ class QueriesOperation:
         except sqlalchemy.exc.NoResultFound:
             return {'result': 'Записи не найдено'}
 
+    def get_accepted_queries(self):
+        try:
+            return self.session.query(Query).all()
+        except sqlalchemy.exc.NoResultFound:
+            return {'result': 'Записей нету'}
+
     def get_accepted_query_by_id(self, id):
         try:
             return self.session.query(AcceptedQuery).filter(AcceptedQuery.id == id).one()
